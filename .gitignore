@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.local
+data/
+backend/data/
+dist/
+build/
+frontend/dist/
+backend/node_modules/
+frontend/node_modules/
+backend/.env
