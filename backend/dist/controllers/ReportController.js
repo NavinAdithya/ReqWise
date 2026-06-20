@@ -9,11 +9,11 @@ const ValidationResult_1 = require("../models/ValidationResult");
 class ReportController {
     static async runValidation(req, res) {
         try {
-            const { requirementId, qaFindings } = req.body;
+            const { requirementId, qaFindings, modifiedDescription } = req.body;
             if (!requirementId) {
                 return res.status(400).json({ message: 'requirementId is required' });
             }
-            const result = await ComparativeValidationService_1.ComparativeValidationService.runValidation(requirementId, qaFindings);
+            const result = await ComparativeValidationService_1.ComparativeValidationService.runValidation(requirementId, qaFindings, modifiedDescription);
             return res.status(200).json({ validationResult: result });
         }
         catch (error) {

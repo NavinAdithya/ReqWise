@@ -78,6 +78,13 @@ export interface ValidationResult {
   createdAt: string;
 }
 
+export interface QAFindingsPayload {
+  summary: string;
+  missingFeatures: string[];
+  risks: string[];
+  comments?: string;
+}
+
 export type ReportStatus = 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'APPROVED_INTERNAL' | 'SENT_TO_CLIENT' | 'REJECTED';
 
 export interface Report {

@@ -87,10 +87,18 @@ class ReviewService {
             await AuditService_1.AuditService.log(clientId, 'CLIENT_ACCEPT', 'Requirement', requirement._id, { status: 'CLIENT_REVIEW' }, { status: 'FINALIZED' });
         }
         else if (data.decision === 'REJECT_KEEP_ORIGINAL') {
-            // Revert/finalize original
-            requirement.status = 'FINALIZED';
+            // Client chose to keep original, cancel the QA process
+            requirement.status = 'CANCELED';
             await requirement.save();
-            await AuditService_1.AuditService.log(clientId, 'CLIENT_REJECT_KEEP_ORIGINAL', 'Requirement', requirement._id, { status: 'CLIENT_REVIEW' }, { status: 'FINALIZED' });
+            // Notify Admin and QA
+            const admins = await User_1.User.find({ role: 'ADMIN' });
+            for (const admin of admins) {
+                await NotificationService_1.NotificationService.notify(admin._id, 'CLIENT_DECISION', `Client canceled requirement by keeping original version: "${requirement.title}". Reason: ${data.comments || 'No comment provided'}`);
+            }
+            if (requirement.assignedQA) {
+                await NotificationService_1.NotificationService.notify(requirement.assignedQA, 'CLIENT_DECISION', `Client canceled requirement by keeping original version: "${requirement.title}".`);
+            }
+            await AuditService_1.AuditService.log(clientId, 'CLIENT_REJECT_KEEP_ORIGINAL', 'Requirement', requirement._id, { status: 'CLIENT_REVIEW' }, { status: 'CANCELED' });
         }
         else if (data.decision === 'REJECT_RECOMMENDATION') {
             // Revert status to REVALIDATION

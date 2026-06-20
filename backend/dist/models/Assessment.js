@@ -15,6 +15,8 @@ const AssessmentSchema = new mongoose_1.Schema({
         default: 'PENDING',
         required: true
     },
+    deadline: { type: Date, required: true },
+    penaltyCharge: { type: Number, default: 0 },
     completedAt: { type: Date }
 }, {
     timestamps: true

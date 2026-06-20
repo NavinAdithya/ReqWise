@@ -19,7 +19,8 @@ const RequirementSchema = new mongoose_1.Schema({
             'UNDER_REVIEW',
             'CLIENT_REVIEW',
             'REVALIDATION',
-            'FINALIZED'
+            'FINALIZED',
+            'CANCELED'
         ],
         default: 'DRAFT',
         required: true

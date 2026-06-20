@@ -46,7 +46,7 @@ class AiValidationService {
     `;
         try {
             const result = await ai.models.generateContent({
-                model: 'gemini-3.5-flash',
+                model: 'gemini-3.1-flash-lite',
                 contents: prompt
             });
             const responseText = result.text || '';
@@ -57,7 +57,7 @@ class AiValidationService {
         }
         catch (error) {
             console.error('AI Validation Error:', error);
-            throw new Error('Failed to generate AI validation. ' + error.message);
+            throw new Error('Failed to generate AI validation. ' + error?.message);
         }
     }
     static async runComparativeAnalysis(reportId) {
@@ -102,18 +102,19 @@ class AiValidationService {
 
       Provide a JSON response with exactly this structure:
       {
-        "highlightedResult": "<string containing a Github Flavored Markdown TABLE. Provide a detailed tabular column comparing 'Feature / Risk (from QA Report)', 'Is it relevant to Requirement?', 'QA Report State', and 'Your Evaluation'. Below the table, provide a strict 2-3 sentence summary of your findings.>",
+        "highlightedResult": "<string containing a Github Flavored Markdown TABLE. Provide a detailed tabular column comparing 'Feature / Risk (from QA Report)', 'Is it relevant to Requirement?', 'QA Report State', and 'Your Evaluation'.\\n\\nBelow the table, provide a strict 2-3 sentence summary of your findings.\\n\\nNext, provide a section titled '**Recommendation Explanation**' and explicitly explain WHY you are recommending the specific action (APPROVE, REJECT, or SEND_TO_CLIENT).\\n\\nFinally, provide a section titled '**QA Mistakes Identified**' and explicitly list any mistakes made by the QA analyst (e.g., hallucinated fake features, missed critical domain rules). If no mistakes were made, explicitly state 'No mistakes were identified in the QA analysis.'>",
         "recommendation": "<string: must be exactly 'APPROVE', 'REJECT', or 'SEND_TO_CLIENT'>"
       }
 
-      Recommendation Guidelines:
-      - 'REJECT': The QA report contains fake/hallucinated features or risks not relevant to the requirement, OR missed flagging a missing critical domain rule.
-      - 'APPROVE': The QA report accurately identifies valid missing features/risks based on the requirement, with no hallucinations.
-      - 'SEND_TO_CLIENT': The QA report perfectly captures all requirements, found no fake issues, and is ready for external release.
+      Recommendation Guidelines (ABSOLUTE RULES):
+      Look at the QA Identified Missing Features and QA Identified Risks:
+      1. If the QA Analyst hallucinated fake features or missed critical domain rules: return 'REJECT'.
+      2. If "Missing Features" or "Risks" contains ANY items (not 'None'): return 'SEND_TO_CLIENT'. DO NOT return APPROVE under any circumstances if a missing feature or risk was found. The client must fix it.
+      3. If and ONLY if BOTH "Missing Features" and "Risks" are exactly 'None': return 'APPROVE'.
     `;
         try {
             const result = await ai.models.generateContent({
-                model: 'gemini-3.5-flash',
+                model: 'gemini-3.1-flash-lite',
                 contents: prompt
             });
             const responseText = result.text || '';
@@ -123,7 +124,7 @@ class AiValidationService {
         }
         catch (error) {
             console.error('AI Comparative Analysis Error:', error);
-            throw new Error('Failed to generate comparative analysis. ' + error.message);
+            throw new Error('Failed to generate comparative analysis. ' + error?.message);
         }
     }
     static async evaluateRequirementQuality(requirementId) {
@@ -254,7 +255,7 @@ class AiValidationService {
     `;
         try {
             const result = await ai.models.generateContent({
-                model: 'gemini-3.5-flash',
+                model: 'gemini-3.1-flash-lite',
                 contents: prompt
             });
             const responseText = result.text || '';
@@ -263,8 +264,8 @@ class AiValidationService {
             return parsed;
         }
         catch (error) {
-            console.error('AI Requirement Quality Gate Error:', error);
-            throw new Error('Failed to run requirement quality gate. ' + error.message);
+            console.error('AI Requirement Quality Error:', error);
+            throw new Error('Failed to evaluate requirement quality. ' + error?.message);
         }
     }
 }

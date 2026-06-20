@@ -101,7 +101,7 @@ class AssessmentService {
               Return ONLY a JSON array of 3 strings. Example: ["question 1", "question 2", "question 3"]
             `;
                         const result = await ai.models.generateContent({
-                            model: 'gemini-3.5-flash',
+                            model: 'gemini-1.5-flash',
                             contents: prompt
                         });
                         const responseText = (result.text || '').replace(/```json\n?|\n?```/gi, '').trim();
@@ -120,7 +120,8 @@ class AssessmentService {
                     totalWeight,
                     questions,
                     answers: questions.map(() => ''),
-                    status: 'PENDING'
+                    status: 'PENDING',
+                    deadline: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
                 });
                 await assessment.save();
                 // Notify QA
@@ -145,6 +146,9 @@ class AssessmentService {
         assessment.answers = answers;
         assessment.status = 'COMPLETED';
         assessment.completedAt = new Date();
+        if (assessment.completedAt > assessment.deadline) {
+            assessment.penaltyCharge = 50;
+        }
         // Simulate grading (simple length-based score or default rating)
         let score = 0;
         for (const ans of answers) {
@@ -190,7 +194,7 @@ class AssessmentService {
           Return ONLY a JSON array of 3 strings. Example: ["question 1", "question 2", "question 3"]
         `;
                 const result = await ai.models.generateContent({
-                    model: 'gemini-3.5-flash',
+                    model: 'gemini-1.5-flash',
                     contents: prompt
                 });
                 const responseText = (result.text || '').replace(/```json\n?|\n?```/gi, '').trim();
@@ -209,7 +213,8 @@ class AssessmentService {
             totalWeight: 10, // Admin triggered, assume weight threshold met
             questions,
             answers: questions.map(() => ''),
-            status: 'PENDING'
+            status: 'PENDING',
+            deadline: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
         });
         await assessment.save();
         await NotificationService_1.NotificationService.notify(qaId, 'ASSESSMENT', `An Admin has manually triggered a Performance Assessment for you. Please complete it.`);

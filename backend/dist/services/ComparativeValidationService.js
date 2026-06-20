@@ -7,7 +7,7 @@ const ValidationResult_1 = require("../models/ValidationResult");
 const CoverageService_1 = require("./CoverageService");
 const VersionCompareService_1 = require("./VersionCompareService");
 class ComparativeValidationService {
-    static async runValidation(requirementId, qaFindings) {
+    static async runValidation(requirementId, qaFindings, modifiedDescription) {
         const current = await Requirement_1.Requirement.findById(requirementId);
         if (!current) {
             throw new Error('Requirement not found');
@@ -22,7 +22,8 @@ class ComparativeValidationService {
             _id: { $ne: current._id }
         });
         let maxSimilarity = null;
-        const currentWords = new Set(current.description.toLowerCase().match(/\b\w+\b/g) || []);
+        const descToValidate = modifiedDescription || current.description;
+        const currentWords = new Set(descToValidate.toLowerCase().match(/\b\w+\b/g) || []);
         if (historicalReqs.length > 0) {
             maxSimilarity = 0;
             for (const hist of historicalReqs) {
@@ -39,7 +40,7 @@ class ComparativeValidationService {
         }
         // 3. Missing Sections Warning
         const missingSections = [];
-        const descLower = current.description.toLowerCase();
+        const descLower = descToValidate.toLowerCase();
         const standardHeaders = {
             Fintech: ['security', 'audit trail', 'transaction limits', 'pci compliance'],
             Healthcare: ['hipaa', 'patient consent', 'privacy', 'access logging'],
@@ -57,7 +58,7 @@ class ComparativeValidationService {
         // 5. Conflict Alerts
         const conflictAlerts = [];
         // Check conflicts in current text/findings
-        const checkText = `${current.description} ${qaFindings?.summary || ''} ${qaFindings?.missingFeatures?.join(' ') || ''}`.toLowerCase();
+        const checkText = `${descToValidate} ${qaFindings?.summary || ''} ${qaFindings?.missingFeatures?.join(' ') || ''}`.toLowerCase();
         // Check for contradictory terms (e.g. http vs https, admin can delete vs admin cannot delete)
         if (checkText.includes('http://') && current.category === 'Fintech') {
             conflictAlerts.push('Security Conflict: Non-secure protocol http:// specified for a Fintech category requirement.');

@@ -1,5 +1,5 @@
 import { request } from './api';
-import type { Report, ValidationResult } from '../types';
+import type { Report, ValidationResult, QAFindingsPayload } from '../types';
 
 export interface DraftReportPayload {
   requirementId: string;

@@ -42,10 +42,10 @@ async function seed() {
         admins.push(admin);
     }
     console.log(`Seeded/verified ${admins.length} Admins.`);
-    // 2. Seed 10 QAs
-    const qaNames = ['Sandhya', 'Nivetha', 'Monish', 'Aishwarya', 'Akshaya', 'Allen', 'QA Analyst 7', 'QA Analyst 8', 'QA Analyst 9', 'QA Analyst 10'];
+    // 2. Seed 6 QAs
+    const qaNames = ['Sandhya', 'Nivetha', 'Monish', 'Aishwarya', 'Akshaya', 'Allen'];
     const qas = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 6; i++) {
         let qa = await User_1.User.findOne({ email: `qa${i + 1}@reqwise.com` });
         if (!qa) {
             qa = new User_1.User({
@@ -261,7 +261,9 @@ async function seed() {
             'Detail your QA validation approach for boundary edges in Fintech requirements.',
             'Explain how you ensure checklist accuracy when verifying PCI-DSS constraints.'
         ],
-        status: 'PENDING'
+        status: 'PENDING',
+        deadline: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+        penaltyCharge: 0
     });
     await a1.save();
     assessments.push(a1);
@@ -275,7 +277,9 @@ async function seed() {
             'Detail your QA validation approach for ambiguous specifications.',
             'How do you check for concurrency bottlenecks in fintech ledger accounts?'
         ],
-        status: 'PENDING'
+        status: 'PENDING',
+        deadline: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+        penaltyCharge: 0
     });
     await a2.save();
     assessments.push(a2);
@@ -292,7 +296,9 @@ async function seed() {
             answers: ['I run a basic matrix check.', 'I look at the boundary constraints.'],
             status: 'COMPLETED',
             score: 80 + i * 2, // 80, 82, 84, 86, 88, 90
-            completedAt: new Date(Date.now() - 86400000 * (i + 1))
+            completedAt: new Date(Date.now() - 86400000 * (i + 1)),
+            deadline: new Date(Date.now() - 86400000 * (i + 2)), // Deadline before completedAt (so it's "late" ? no wait, let's just make it not late)
+            penaltyCharge: 0
         });
         await histAssesment.save();
         assessments.push(histAssesment);

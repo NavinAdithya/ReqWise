@@ -62,14 +62,15 @@ class RequirementService {
     }
     static validateTransition(current, next) {
         const allowedTransitions = {
-            DRAFT: ['ASSIGNED'],
-            ASSIGNED: ['UNDER_ANALYSIS'],
-            UNDER_ANALYSIS: ['REPORT_GENERATED'],
-            REPORT_GENERATED: ['UNDER_REVIEW'],
-            UNDER_REVIEW: ['CLIENT_REVIEW', 'REVALIDATION'],
-            CLIENT_REVIEW: ['FINALIZED', 'REVALIDATION', 'DRAFT', 'ASSIGNED'], // DRAFT/ASSIGNED occurs if versioned/modified
-            REVALIDATION: ['UNDER_ANALYSIS'],
-            FINALIZED: []
+            DRAFT: ['ASSIGNED', 'CANCELED'],
+            ASSIGNED: ['UNDER_ANALYSIS', 'CANCELED'],
+            UNDER_ANALYSIS: ['REPORT_GENERATED', 'CANCELED'],
+            REPORT_GENERATED: ['UNDER_REVIEW', 'CANCELED'],
+            UNDER_REVIEW: ['CLIENT_REVIEW', 'REVALIDATION', 'CANCELED'],
+            CLIENT_REVIEW: ['FINALIZED', 'REVALIDATION', 'DRAFT', 'ASSIGNED', 'CANCELED'],
+            REVALIDATION: ['UNDER_ANALYSIS', 'CANCELED'],
+            FINALIZED: [],
+            CANCELED: []
         };
         const allowed = allowedTransitions[current] || [];
         if (!allowed.includes(next)) {
