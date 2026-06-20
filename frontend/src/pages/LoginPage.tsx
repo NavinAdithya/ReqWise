@@ -82,6 +82,25 @@ export const LoginPage: React.FC = () => {
             {loading ? 'Authenticating...' : 'SIGN IN'}
           </button>
         </form>
+
+        <div className="mt-6 pt-4 border-t border-slate-100 text-center">
+          <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Demo Credentials</p>
+          <div className="flex flex-col gap-1.5 text-xs text-slate-600 text-left">
+            <div className="flex justify-between px-2 py-1 bg-slate-50 rounded">
+              <span className="font-medium text-slate-500">Admin</span>
+              <span className="font-mono text-brand-600 text-[11px]">admin1@reqwise.com</span>
+            </div>
+            <div className="flex justify-between px-2 py-1 bg-slate-50 rounded">
+              <span className="font-medium text-slate-500">QA Lead</span>
+              <span className="font-mono text-brand-600 text-[11px]">qa1@reqwise.com</span>
+            </div>
+            <div className="flex justify-between px-2 py-1 bg-slate-50 rounded">
+              <span className="font-medium text-slate-500">Client</span>
+              <span className="font-mono text-brand-600 text-[11px]">client1@reqwise.com</span>
+            </div>
+            <p className="text-[10px] text-slate-400 mt-1 text-center italic">Password for all: <span className="font-mono font-medium">password123</span></p>
+          </div>
+        </div>
       </div>
     </div>
   );
