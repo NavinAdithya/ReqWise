@@ -1,0 +1,14 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const RequirementController_1 = require("../controllers/RequirementController");
+const auth_1 = require("../middleware/auth");
+const router = (0, express_1.Router)();
+router.post('/', auth_1.protect, (0, auth_1.restrictTo)('CLIENT', 'ADMIN'), RequirementController_1.RequirementController.create);
+router.get('/', auth_1.protect, RequirementController_1.RequirementController.list);
+router.get('/:id', auth_1.protect, RequirementController_1.RequirementController.getById);
+router.patch('/:id/assign', auth_1.protect, (0, auth_1.restrictTo)('ADMIN'), RequirementController_1.RequirementController.assign);
+router.get('/:id/checklist', auth_1.protect, RequirementController_1.RequirementController.getChecklist);
+router.put('/:id/checklist', auth_1.protect, (0, auth_1.restrictTo)('QA', 'ADMIN'), RequirementController_1.RequirementController.updateChecklist);
+router.get('/:id/quality-gate', auth_1.protect, (0, auth_1.restrictTo)('ADMIN', 'QA'), RequirementController_1.RequirementController.evaluateQuality);
+exports.default = router;

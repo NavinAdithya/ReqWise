@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const ReportController_1 = require("../controllers/ReportController");
+const auth_1 = require("../middleware/auth");
+const router = (0, express_1.Router)();
+router.post('/', auth_1.protect, (0, auth_1.restrictTo)('QA'), ReportController_1.ReportController.draft);
+router.post('/:id/submit', auth_1.protect, (0, auth_1.restrictTo)('QA'), ReportController_1.ReportController.submit);
+router.get('/requirement/:id', auth_1.protect, ReportController_1.ReportController.getByRequirement);
+router.post('/validation/run', auth_1.protect, (0, auth_1.restrictTo)('QA', 'ADMIN', 'CLIENT'), ReportController_1.ReportController.runValidation);
+router.post('/:id/ai-validate', auth_1.protect, (0, auth_1.restrictTo)('ADMIN'), ReportController_1.ReportController.aiValidate);
+exports.default = router;

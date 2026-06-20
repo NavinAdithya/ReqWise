@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const MistakeController_1 = require("../controllers/MistakeController");
+const auth_1 = require("../middleware/auth");
+const router = (0, express_1.Router)();
+router.post('/', auth_1.protect, (0, auth_1.restrictTo)('ADMIN'), MistakeController_1.MistakeController.create);
+router.get('/', auth_1.protect, (0, auth_1.restrictTo)('ADMIN'), MistakeController_1.MistakeController.listAll);
+router.get('/qa/:qaId', auth_1.protect, MistakeController_1.MistakeController.listByQA);
+exports.default = router;

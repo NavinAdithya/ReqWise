@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const AssessmentController_1 = require("../controllers/AssessmentController");
+const auth_1 = require("../middleware/auth");
+const router = (0, express_1.Router)();
+router.post('/', auth_1.protect, (0, auth_1.restrictTo)('QA'), AssessmentController_1.AssessmentController.submitAnswers);
+router.post('/trigger/:qaId', auth_1.protect, (0, auth_1.restrictTo)('ADMIN'), AssessmentController_1.AssessmentController.triggerManual);
+router.get('/', auth_1.protect, (0, auth_1.restrictTo)('ADMIN'), AssessmentController_1.AssessmentController.listAll);
+router.get('/qa/:qaId', auth_1.protect, AssessmentController_1.AssessmentController.getByQA);
+router.get('/:id', auth_1.protect, AssessmentController_1.AssessmentController.getById);
+exports.default = router;
