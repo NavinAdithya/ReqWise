@@ -37,11 +37,11 @@ export const connectDB = async (): Promise<void> => {
     await mongoose.connect(connUri);
     console.log(`MongoDB Connected successfully`);
 
-    // Auto-seed only in development and only if we just created the server
-    if (process.env.NODE_ENV === 'development' && !(global as any).__SEEDED__) {
+    // Auto-seed if we are using the local/in-memory database, even in production on Render
+    if (connUri.includes('127.0.0.1') && !(global as any).__SEEDED__) {
       (global as any).__SEEDED__ = true;
       console.log('Running auto-seed for in-memory database...');
-      exec('npx ts-node src/scripts/seedProduction.ts', { env: { ...process.env, MONGODB_URI: connUri } }, (error, stdout, stderr) => {
+      exec('node dist/scripts/seedProduction.js', { env: { ...process.env, MONGODB_URI: connUri } }, (error, stdout, stderr) => {
         if (error) {
           console.error(`Auto-seed error: ${error.message}`);
           return;
